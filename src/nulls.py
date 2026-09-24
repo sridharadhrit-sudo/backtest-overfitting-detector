@@ -3,8 +3,9 @@
 import numpy as np
 from scipy.stats import norm
 
+from src.units import TRADING_DAYS, annualise  # noqa: F401  (re-exported)
+
 EULER_MASCHERONI = 0.5772156649015329
-TRADING_DAYS = 252
 
 
 def simulate_null_returns(n_strategies, n_periods, rng):
@@ -27,11 +28,6 @@ def expected_max_sharpe(n_trials, sigma_sr=1.0):
         (1 - g) * norm.ppf(1 - 1 / n_trials)
         + g * norm.ppf(1 - 1 / (n_trials * np.e))
     )
-
-
-def annualise(sharpe_per_period, periods_per_year=TRADING_DAYS):
-    """Convert a per-period Sharpe to an annual one."""
-    return sharpe_per_period * np.sqrt(periods_per_year)
 
 
 def max_sharpe_distribution(n_strategies, n_periods, n_experiments, seed=0):
