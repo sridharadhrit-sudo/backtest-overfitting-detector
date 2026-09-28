@@ -55,3 +55,43 @@ def sweep(prices, fast_windows, slow_windows, cost=DEFAULT_COST):
     frame = pd.DataFrame(columns).iloc[warmup:]
     frame = frame.dropna(how="any")
     return frame.to_numpy().T, params
+
+
+def fast_sweep(prices, fast_windows, slow_windows, cost=DEFAULT_COST):
+    """Same answer as `sweep`, but built from precomputed rolling means.
+
+    `sweep` recomputes both moving averages for every one of the 815 pairs, so each
+    window length is recalculated dozens of times. Here every distinct window is
+    averaged once and the pairs are assembled from the results. Same output, roughly
+    two orders of magnitude faster -- which is what makes the bootstrap in Stage 6
+    affordable.
+    """
+    params = parameter_grid(fast_windows, slow_windows)
+    if not params:
+        raise ValueError("no valid (fast, slow) pairs in the supplied windows")
+
+    values = np.asarray(prices, dtype=float)
+    asset_returns = np.empty_like(values)
+    asset_returns[0] = np.nan
+    asset_returns[1:] = values[1:] / values[:-1] - 1.0
+
+    windows = sorted({w for pair in params for w in pair})
+    cumulative = np.concatenate(([0.0], np.cumsum(values)))
+    means = {}
+    for w in windows:
+        rolled = np.full(values.size, np.nan)
+        rolled[w - 1:] = (cumulative[w:] - cumulative[: cumulative.size - w]) / w
+        means[w] = rolled
+
+    warmup = max(s for _, s in params) + 1
+    rows = np.empty((len(params), values.size - warmup))
+    for i, (f, s) in enumerate(params):
+        signal = np.sign(means[f] - means[s])
+        position = np.empty_like(signal)
+        position[0] = np.nan
+        position[1:] = signal[:-1]
+        turnover = np.abs(np.diff(position, prepend=position[0]))
+        turnover[np.isnan(turnover)] = 0.0
+        rows[i] = (position * asset_returns - cost * turnover)[warmup:]
+
+    return rows, params
