@@ -66,3 +66,18 @@ def deflate_family(returns_matrix, n_trials=None):
         "dsr": probabilistic_sharpe_ratio(sr, winner_returns.size, sr0, g3, g4),
         "psr_vs_zero": probabilistic_sharpe_ratio(sr, winner_returns.size, 0.0, g3, g4),
     }
+
+
+def dsr_curve(report, n_periods, trial_counts):
+    """DSR of an already-selected winner, re-evaluated under different trial counts.
+
+    Everything except the threshold is fixed once the winner is chosen, so this is
+    cheap: one threshold per assumed N, no need to touch the returns again.
+    """
+    sr0 = [expected_max_sharpe(int(n), report["sigma_sr"]) if n >= 2 else 0.0
+           for n in trial_counts]
+    return np.array([
+        probabilistic_sharpe_ratio(report["sharpe"], n_periods, t,
+                                   report["skewness"], report["kurtosis"])
+        for t in sr0
+    ])

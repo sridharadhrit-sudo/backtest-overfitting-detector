@@ -77,7 +77,7 @@ def cluster_curve(returns_matrix, thresholds=None, method="average"):
 
 
 def bootstrap_family_null(prices, fast_windows, slow_windows, n_bootstrap=300,
-                          block_length=21, cost=None, seed=0):
+                          block_length=21, cost=None, seed=0, on_step=None):
     """The null distribution of the winner's Sharpe, for THIS family of strategies.
 
     Resampling the daily returns in blocks destroys trends and reversals -- anything a
@@ -90,7 +90,8 @@ def bootstrap_family_null(prices, fast_windows, slow_windows, n_bootstrap=300,
     "the best of my 815 variants, by luck alone" actually means, with no assumption that
     the trials were independent. Results are stable for block lengths from 1 to 63.
 
-    Set block_length=1 for a plain i.i.d. shuffle.
+    Set block_length=1 for a plain i.i.d. shuffle. `on_step(done, total)`, if given,
+    is called after each resample so a caller can show progress.
     """
     from src.backtest import DEFAULT_COST, fast_sweep
 
@@ -117,6 +118,8 @@ def bootstrap_family_null(prices, fast_windows, slow_windows, n_bootstrap=300,
         sharpes = matrix.mean(axis=1) / matrix.std(axis=1, ddof=1)
         best[i] = sharpes.max()
         dispersion[i] = sharpes.std(ddof=1)
+        if on_step is not None:
+            on_step(i + 1, n_bootstrap)
 
     return best, dispersion
 

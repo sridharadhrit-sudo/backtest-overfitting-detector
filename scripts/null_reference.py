@@ -14,7 +14,7 @@ import numpy as np
 from src.dsr import deflate_family
 from src.nulls import simulate_null_returns
 
-N_EXPERIMENTS = 200   # raise for a tighter p-value; runtime scales linearly
+N_EXPERIMENTS = 300   # raise for a tighter p-value; runtime scales linearly
 SEED = 2026
 
 
