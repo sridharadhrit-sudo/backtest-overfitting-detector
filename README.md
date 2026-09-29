@@ -1,5 +1,7 @@
 # Backtest Overfitting Detector
 
+**[Open the live dashboard →](https://backtest-overfitting-detector.streamlit.app/)**
+
 Backtest a thousand trading rules with no real edge, keep the best one, and it will
 look excellent. You haven't found a strategy — you've found the right tail of a
 sampling distribution. The best Sharpe ratio you find measures how many things you
@@ -20,6 +22,8 @@ grid of moving-average windows and a cost level, and every test reruns live: the
 against the noise bar, the Deflated Sharpe Ratio under any assumed trial count, the
 cross-validated overfitting probability with its degradation scatter, and — on demand —
 the bootstrap null for exactly that family. A data tab gives every number in table form.
+
+It is deployed at **[backtest-overfitting-detector.streamlit.app](https://backtest-overfitting-detector.streamlit.app/)**, or run it locally:
 
 ```bash
 uv run streamlit run app.py

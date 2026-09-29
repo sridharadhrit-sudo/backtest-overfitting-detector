@@ -56,7 +56,10 @@ def get_spectral(ticker, start, fast, slow, cost):
 
 # ---------------------------------------------------------------- controls
 
-palette = charts.PALETTES["dark" if st.context.theme.type == "dark" else "light"]
+# The configured theme decides what the page actually renders; ask it first, so the
+# charts can never draw in dark-mode colours on a light page (or the reverse).
+theme_mode = st.get_option("theme.base") or st.context.theme.type
+palette = charts.PALETTES["dark" if theme_mode == "dark" else "light"]
 
 with st.sidebar:
     st.header("The strategy family")
