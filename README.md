@@ -1,6 +1,8 @@
 # Backtest Overfitting Detector
 
-**[Open the live dashboard →](https://backtest-overfitting-detector.streamlit.app/)**
+[![tests](https://github.com/sridharadhrit-sudo/backtest-overfitting-detector/actions/workflows/tests.yml/badge.svg)](https://github.com/sridharadhrit-sudo/backtest-overfitting-detector/actions/workflows/tests.yml)
+
+**[Open the live dashboard →](https://backtest-overfitting-detector.streamlit.app/)** · **[Read the methods note →](METHODS.md)**
 
 Backtest a thousand trading rules with no real edge, keep the best one, and it will
 look excellent. You haven't found a strategy — you've found the right tail of a
@@ -55,7 +57,7 @@ cross-validation 90% of the time, with the chosen variant's Sharpe collapsing fr
 | **P(resampled history beats the winner)** | **0.82** |
 | Probability of Backtest Overfitting | 0.898 |
 | Winner in sample → out of sample | +0.60 → −0.02 |
-| MinTRL vs the formula's threshold | 285 years |
+| MinTRL vs the formula's threshold | 284 years |
 | Median variant | 0.2092 |
 | Buy and hold SPY | 0.6432 |
 
@@ -98,7 +100,7 @@ tried, so a flaw that breaks the DSR has no route to break it.
 **Counting independent trials by structure would have flipped the verdict.** The 815
 variants span only about 2.7 independent directions by a spectral measure, and cluster
 into 3 groups at a 0.5 correlation threshold. Substituting N ≈ 3 into the deflation
-raises the DSR from 0.66 to about 0.89 and makes the strategy look respectable. That
+raises the DSR from 0.66 to about 0.91 and makes the strategy look respectable. That
 reasoning is wrong: those measures count independent directions in return space, not
 independent opportunities for luck.
 
@@ -111,8 +113,8 @@ with the variants exactly as correlated as they really are. The measured thresho
 produce a better winner than the real one. Two effects compound: the cross-sectional
 spread of trial Sharpes is 46% wider on structureless data than on real SPY, whose long
 bull trend pushes variants in a common direction; and even given that spread, the
-observed maximum exceeds the Gaussian extreme-value prediction by about 18%, because the
-cross-section of these Sharpes is not Gaussian. The result is stable at P = 0.70–0.82
+observed maximum exceeds the Gaussian extreme-value prediction by 17–28% depending on
+block length, because the cross-section of these Sharpes is not Gaussian. The result is stable at P = 0.70–0.82
 across resampling block lengths from 1 to 63 days.
 
 **One quantity in this repo is deliberately not quoted.** Inverting the measured maximum
@@ -170,4 +172,6 @@ cross-sectional dispersion means something. Tests never touch the network.
 
 ## Status
 
-Stages 0–7 of 8 complete. Next: the written methods note.
+Complete. [`METHODS.md`](METHODS.md) is the full write-up: each method explained, the
+results, what changed along the way, limitations, and what to do next. Tests run on
+every push via GitHub Actions. Released under the MIT licence.
